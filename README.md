@@ -35,6 +35,7 @@ Khmer Temple NLP Explorer
 - Khmer punctuation and number-only token removal.
 - EDA dashboard with Plotly charts.
 - Word embedding explorer using saved skip-gram embeddings.
+- The Word Embedding Explorer hides `<UNK>` and common function words by default for cleaner interpretation. This is display-only filtering and does not change the trained model.
 - PCA map of pretrained embeddings.
 - Advanced Clustering page for optional embedding exploration.
 - K-means clustering of word embeddings with silhouette score selection.

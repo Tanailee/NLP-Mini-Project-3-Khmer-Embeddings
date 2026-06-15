@@ -39,6 +39,31 @@ MIN_FREQ = 10
 N_CONTEXT = 5
 HIDDEN_SIZE = 512
 
+# Display-only filtering for presentation-friendly nearest-word tables.
+# This does not change training, embeddings, vocabulary, or model evaluation.
+DISPLAY_STOPWORDS = [
+    "<UNK>",
+    "និង",
+    "នៅ",
+    "ជា",
+    "ដែល",
+    "បាន",
+    "នេះ",
+    "គឺ",
+    "ក្នុង",
+    "ទៅ",
+    "ពី",
+    "នៃ",
+    "មាន",
+    "ដោយ",
+    "ឬ",
+    "ក៏",
+    "មួយ",
+    "គឺជា",
+    "នឹង",
+    "មិន",
+]
+
 KHMER_PUNCTUATION = [
     "។", "៕", "៖", "ៗ", "៘", "៙", "៚", "៛",
     ",", ".", "!", "?", ":", ";",
@@ -843,13 +868,14 @@ def render_model_note(title, body):
     )
 
 
-def render_embedding_result_card(selected_word, status, nearest_count):
+def render_embedding_result_card(selected_word, status, nearest_count, display_filter_on=True):
     card_class = "result-card"
     if status != "Found":
         card_class = "result-card warning"
         status_text = "Not found"
     else:
         status_text = "Found in trained vocabulary"
+    filter_text = "On" if display_filter_on else "Off"
 
     st.markdown(
         f"""
@@ -871,6 +897,10 @@ def render_embedding_result_card(selected_word, status, nearest_count):
                     <div class="result-label">Model Source</div>
                     <div class="result-value">Original temples.txt corpus</div>
                 </div>
+                <div>
+                    <div class="result-label">Display Filter</div>
+                    <div class="result-value">{filter_text}</div>
+                </div>
             </div>
         </div>
         """,
@@ -882,19 +912,21 @@ def render_similarity_table(nearest_df):
     table_rows = []
     for row_index, row in nearest_df.iterrows():
         rank = int(row["Rank"])
-        word = html.escape(str(row["Word"]))
+        word = html.escape(str(row["Similar Word"]))
+        frequency = row.get("Frequency", 1)
         similarity = float(row["Cosine Similarity"])
         table_rows.append(
             "<tr>"
             + f"<td>{rank}</td>"
             + f"<td>{word}</td>"
+            + f"<td>{int(float(frequency))}</td>"
             + f"<td><span class='similarity-score'>{similarity:.4f}</span></td>"
             + "</tr>"
         )
 
     table_html = (
         "<div class='table-shell'><table class='similarity-table'>"
-        "<thead><tr><th>Rank</th><th>Similar Word</th><th>Cosine Similarity</th></tr></thead>"
+        "<thead><tr><th>Rank</th><th>Similar Word</th><th>Frequency</th><th>Cosine Similarity</th></tr></thead>"
         "<tbody>"
         + "".join(table_rows)
         + "</tbody></table></div>"
@@ -914,6 +946,48 @@ def render_similarity_interpretation():
         """,
         unsafe_allow_html=True,
     )
+
+
+def render_embedding_vector_expander(query_word, embeddings, word2idx):
+    if query_word not in word2idx:
+        st.info("Embedding vector is unavailable because this word is not in the trained vocabulary.")
+        return
+
+    word_index = int(word2idx[query_word])
+    embedding_vector = embeddings[word_index]
+    rounded_values = np.round(embedding_vector.astype(float), 4)
+
+    vector_rows = []
+    for index, value in enumerate(rounded_values, start=1):
+        vector_rows.append({"Dimension": "Dimension " + str(index), "Value": float(value)})
+    vector_df = pd.DataFrame(vector_rows)
+
+    with st.expander("View raw 50-dimensional embedding vector"):
+        st.write("Selected word:", query_word)
+        st.write("Embedding dimension:", len(embedding_vector))
+        st.write("First 10 embedding values:")
+        st.code(str(rounded_values[:10].tolist()), language=None)
+        st.dataframe(vector_df, use_container_width=True, hide_index=True)
+        st.write(
+            "The embedding vector is the learned numeric representation of the selected Khmer word. "
+            "Because the vector has 50 dimensions, it is difficult to interpret directly. "
+            "Therefore, cosine similarity is used to compare this vector with other word vectors and find nearest words."
+        )
+
+        csv_df = pd.DataFrame(
+            {
+                "dimension": list(range(1, len(rounded_values) + 1)),
+                "value": rounded_values,
+            }
+        )
+        csv_bytes = csv_df.to_csv(index=False).encode("utf-8")
+        safe_word = re.sub(r"[^A-Za-z0-9_\u1780-\u17FF-]+", "_", str(query_word))
+        st.download_button(
+            "Download embedding vector as CSV",
+            data=csv_bytes,
+            file_name="embedding_vector_" + safe_word + ".csv",
+            mime="text/csv",
+        )
 
 
 def style_plotly_chart(fig, height=420, bargap=None):
@@ -1346,9 +1420,14 @@ def plot_numbered_dendrogram(clustered_df, vectors, number_words=40):
     return fig, label_df
 
 
-def cosine_nearest_words(query_word, embeddings, word2idx, idx2word, top_k=10):
+def cosine_nearest_words(query_word, embeddings, word2idx, idx2word, token_frequency, top_k=10, candidate_k=100, hide_common_words=True):
     if query_word not in word2idx:
         return pd.DataFrame()
+
+    frequency_map = {}
+    if not token_frequency.empty and "word" in token_frequency.columns and "frequency" in token_frequency.columns:
+        for row_index, row in token_frequency.iterrows():
+            frequency_map[str(row["word"])] = float(row["frequency"])
 
     query_index = int(word2idx[query_word])
     query_vector = embeddings[query_index]
@@ -1364,12 +1443,33 @@ def cosine_nearest_words(query_word, embeddings, word2idx, idx2word, top_k=10):
             similarity = 0.0
         else:
             similarity = float(np.dot(query_vector, other_vector) / denominator)
-        rows.append({"Rank": 0, "Word": idx2word[index], "Cosine Similarity": similarity})
+        word = idx2word[index]
+        rows.append(
+            {
+                "Rank": 0,
+                "Similar Word": word,
+                "Frequency": frequency_map.get(word, 1.0),
+                "Cosine Similarity": similarity,
+            }
+        )
 
     rows = sorted(rows, key=lambda row: row["Cosine Similarity"], reverse=True)
-    top_rows = rows[:top_k]
+    candidate_rows = rows[:candidate_k]
+    top_rows = []
+    for row in candidate_rows:
+        similar_word = str(row["Similar Word"])
+        if similar_word == query_word:
+            continue
+        if hide_common_words and similar_word in DISPLAY_STOPWORDS:
+            continue
+        top_rows.append(row)
+        if len(top_rows) >= top_k:
+            break
+
     for index, row in enumerate(top_rows):
         row["Rank"] = index + 1
+    if len(top_rows) == 0:
+        return pd.DataFrame(columns=["Rank", "Similar Word", "Frequency", "Cosine Similarity"])
     return pd.DataFrame(top_rows)
 
 
@@ -1890,6 +1990,9 @@ elif page == "Word Embedding Explorer":
         default_index = 0
         selected_word = st.selectbox("Select a Khmer word from trained vocabulary", available_words, index=default_index)
         typed_word = st.text_input("Or type a Khmer word to search inside trained vocabulary")
+        hide_common_words = st.checkbox("Hide <UNK> and common function words", value=True)
+        if hide_common_words:
+            st.info("Common function words and <UNK> are hidden only for display. The trained model is not changed.")
 
         if typed_word.strip() != "":
             query_word = typed_word.strip()
@@ -1897,15 +2000,27 @@ elif page == "Word Embedding Explorer":
             query_word = selected_word
 
         if query_word in word2idx:
-            nearest_df = cosine_nearest_words(query_word, embeddings, word2idx, idx2word, top_k=10)
-            nearest_df = nearest_df.rename(columns={"Word": "Similar Word"})
+            nearest_df = cosine_nearest_words(
+                query_word,
+                embeddings,
+                word2idx,
+                idx2word,
+                token_frequency,
+                top_k=10,
+                candidate_k=100,
+                hide_common_words=hide_common_words,
+            )
             nearest_df["Cosine Similarity"] = nearest_df["Cosine Similarity"].round(4)
-            table_df = nearest_df.rename(columns={"Similar Word": "Word"})
-            render_embedding_result_card(query_word, "Found", len(nearest_df))
-            render_similarity_table(table_df)
+            render_embedding_result_card(query_word, "Found", len(nearest_df), display_filter_on=hide_common_words)
+            render_embedding_vector_expander(query_word, embeddings, word2idx)
+            render_similarity_table(nearest_df)
             render_similarity_interpretation()
+            render_model_note(
+                "Display filtering note",
+                "For presentation readability, <UNK> and common function words are hidden from the nearest-word table. This filtering is only for display and does not change the trained embeddings or model results.",
+            )
         else:
-            render_embedding_result_card(query_word, "Not Found", 0)
+            render_embedding_result_card(query_word, "Not Found", 0, display_filter_on=hide_common_words)
             st.warning("This word is not in the trained vocabulary.")
             st.write("Try one of these frequent available words:")
             if not token_frequency.empty and "word" in token_frequency.columns:

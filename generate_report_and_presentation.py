@@ -54,6 +54,29 @@ FALLBACK_RESULTS = {
     "scratch_perplexity": 229.07,
 }
 
+DISPLAY_STOPWORDS = [
+    "<UNK>",
+    "និង",
+    "នៅ",
+    "ជា",
+    "ដែល",
+    "បាន",
+    "នេះ",
+    "គឺ",
+    "ក្នុង",
+    "ទៅ",
+    "ពី",
+    "នៃ",
+    "មាន",
+    "ដោយ",
+    "ឬ",
+    "ក៏",
+    "មួយ",
+    "គឺជា",
+    "នឹង",
+    "មិន",
+]
+
 
 def ensure_dirs():
     for path in [FIGURE_DIR, REPORT_DIR, PRESENTATION_DIR]:
@@ -163,6 +186,7 @@ def load_project_data():
 
     total_tokens = len(cleaned_tokens) if not cleaned_tokens.empty else FALLBACK_RESULTS["total_tokens"]
     vocab_size = len(vocabulary) if not vocabulary.empty else FALLBACK_RESULTS["vocab_size"]
+    nearest_words_filtered = create_filtered_nearest_examples(token_frequency)
 
     return {
         "cleaned_tokens": cleaned_tokens,
@@ -174,9 +198,124 @@ def load_project_data():
         "kmeans_clusters": kmeans_clusters,
         "cluster_summary": cluster_summary,
         "dendrogram_labels": dendrogram_labels,
+        "nearest_words_filtered": nearest_words_filtered,
         "total_tokens": total_tokens,
         "vocab_size": vocab_size,
     }
+
+
+def create_filtered_nearest_examples(token_frequency, top_k=10, candidate_k=100):
+    output_path = TABLE_DIR / "nearest_words_filtered.csv"
+    emb_path = EMBEDDING_DIR / "skipgram_embeddings.npy"
+    word2idx_path = EMBEDDING_DIR / "word2idx.json"
+    idx2word_path = EMBEDDING_DIR / "idx2word.json"
+    if not emb_path.exists() or not word2idx_path.exists() or not idx2word_path.exists():
+        return read_csv_or_empty(output_path)
+
+    try:
+        embeddings = np.load(emb_path)
+        with open(word2idx_path, "r", encoding="utf-8") as file:
+            word2idx = json.load(file)
+        with open(idx2word_path, "r", encoding="utf-8") as file:
+            idx2word_json = json.load(file)
+        idx2word = []
+        for key, value in sorted(idx2word_json.items(), key=lambda item: int(item[0])):
+            idx2word.append(value)
+
+        frequency_map = {}
+        if not token_frequency.empty and {"word", "frequency"}.issubset(token_frequency.columns):
+            for row_index, row in token_frequency.iterrows():
+                frequency_map[str(row["word"])] = float(row["frequency"])
+
+        query_words = []
+        if not token_frequency.empty and "word" in token_frequency.columns:
+            for word in token_frequency["word"].astype(str).tolist():
+                if word in word2idx and word not in DISPLAY_STOPWORDS:
+                    query_words.append(word)
+                if len(query_words) >= 3:
+                    break
+        if len(query_words) == 0:
+            for word in idx2word:
+                if word in word2idx and word not in DISPLAY_STOPWORDS:
+                    query_words.append(word)
+                if len(query_words) >= 3:
+                    break
+
+        rows = []
+        for query_word in query_words:
+            nearest_df = get_nearest_words_for_display(
+                query_word,
+                embeddings,
+                word2idx,
+                idx2word,
+                frequency_map,
+                top_k=top_k,
+                candidate_k=candidate_k,
+            )
+            for row_index, row in nearest_df.iterrows():
+                rows.append(
+                    {
+                        "Query Word": query_word,
+                        "Rank": int(row["Rank"]),
+                        "Similar Word": row["Similar Word"],
+                        "Frequency": int(float(row["Frequency"])),
+                        "Cosine Similarity": float(row["Cosine Similarity"]),
+                    }
+                )
+
+        nearest_words_filtered = pd.DataFrame(rows)
+        if not nearest_words_filtered.empty:
+            nearest_words_filtered.to_csv(output_path, index=False)
+        return nearest_words_filtered
+    except Exception:
+        return read_csv_or_empty(output_path)
+
+
+def get_nearest_words_for_display(query_word, embeddings, word2idx, idx2word, frequency_map, top_k=10, candidate_k=100):
+    if query_word not in word2idx:
+        return pd.DataFrame(columns=["Rank", "Similar Word", "Frequency", "Cosine Similarity"])
+
+    query_index = int(word2idx[query_word])
+    query_vector = embeddings[query_index]
+    query_norm = np.linalg.norm(query_vector)
+
+    rows = []
+    for index, word in enumerate(idx2word):
+        if index == query_index:
+            continue
+        other_vector = embeddings[index]
+        denominator = query_norm * np.linalg.norm(other_vector)
+        if denominator == 0:
+            similarity = 0.0
+        else:
+            similarity = float(np.dot(query_vector, other_vector) / denominator)
+        rows.append(
+            {
+                "Rank": 0,
+                "Similar Word": word,
+                "Frequency": frequency_map.get(word, 1.0),
+                "Cosine Similarity": similarity,
+            }
+        )
+
+    rows = sorted(rows, key=lambda row: row["Cosine Similarity"], reverse=True)
+    filtered_rows = []
+    for row in rows[:candidate_k]:
+        similar_word = str(row["Similar Word"])
+        if similar_word == query_word:
+            continue
+        if similar_word in DISPLAY_STOPWORDS:
+            continue
+        filtered_rows.append(row)
+        if len(filtered_rows) >= top_k:
+            break
+
+    for index, row in enumerate(filtered_rows):
+        row["Rank"] = index + 1
+
+    if len(filtered_rows) == 0:
+        return pd.DataFrame(columns=["Rank", "Similar Word", "Frequency", "Cosine Similarity"])
+    return pd.DataFrame(filtered_rows)
 
 
 def save_chart(path):
@@ -580,6 +719,17 @@ def create_word_report(data, chart_paths):
         doc,
         "Cosine similarity compares word vectors. Nearest words are interpreted as contextual neighbors, not always perfect synonyms, because the corpus is small and domain-specific.",
     )
+    nearest_words_filtered = data.get("nearest_words_filtered", pd.DataFrame())
+    if not nearest_words_filtered.empty:
+        add_doc_paragraph(
+            doc,
+            "For readability, <UNK> and common function words are hidden from this table. This does not change the trained embeddings.",
+            bold=True,
+        )
+        table_columns = ["Query Word", "Similar Word", "Frequency", "Cosine Similarity"]
+        display_df = nearest_words_filtered[table_columns].copy()
+        display_df["Cosine Similarity"] = display_df["Cosine Similarity"].astype(float).round(4)
+        add_doc_table(doc, table_columns, display_df.head(20).values.tolist())
 
     doc.add_heading("PCA Visualization", level=1)
     add_doc_paragraph(
@@ -853,11 +1003,42 @@ def create_powerpoint(data, chart_paths):
         "Embedding dimension = 50.",
         "Binary classification: real vs negative pairs.",
     ])
-    add_standard_slide("Word Embedding Analysis", [
-        "Cosine similarity compares word vectors.",
-        "Nearest words show contextual association.",
-        "Small corpus means nearest words are not always synonyms.",
-    ])
+    slide = prs.slides.add_slide(blank)
+    set_slide_background(slide, "FFFFFF")
+    add_slide_title(slide, "Word Embedding Analysis")
+    nearest_words_filtered = data.get("nearest_words_filtered", pd.DataFrame())
+    if not nearest_words_filtered.empty:
+        table_df = nearest_words_filtered[["Query Word", "Similar Word", "Frequency", "Cosine Similarity"]].copy()
+        table_df["Cosine Similarity"] = table_df["Cosine Similarity"].astype(float).round(4)
+        table_rows = table_df.head(8).values.tolist()
+        add_ppt_table(slide, ["Query", "Similar Word", "Freq.", "Cosine"], table_rows, 0.65, 1.15, 7.8, 4.3, font_size=9)
+        add_ppt_bullets(
+            slide,
+            [
+                "Cosine similarity compares word vectors.",
+                "Nearest words show contextual association.",
+                "Display filtering hides <UNK> and common function words for clearer interpretation.",
+            ],
+            left=8.8,
+            top=1.35,
+            width=4.1,
+            height=3.8,
+            font_size=16,
+        )
+    else:
+        add_ppt_bullets(
+            slide,
+            [
+                "Cosine similarity compares word vectors.",
+                "Nearest words show contextual association.",
+                "Display filtering hides <UNK> and common function words for clearer interpretation.",
+                "Small corpus means nearest words are not always synonyms.",
+            ],
+            left=0.8,
+            top=1.25,
+            width=6.0,
+            height=5.2,
+        )
 
     slide = prs.slides.add_slide(blank)
     set_slide_background(slide, "FFFFFF")
