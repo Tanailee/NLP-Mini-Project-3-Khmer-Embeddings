@@ -1,0 +1,11 @@
+pandas
+numpy
+plotly
+scikit-learn
+torch
+khmer-nltk
+streamlit
+python-docx
+python-pptx
+matplotlib
+scipy

@@ -1,0 +1,8 @@
+khmer-nltk
+numpy
+pandas
+plotly
+scikit-learn
+torch
+streamlit
+scipy

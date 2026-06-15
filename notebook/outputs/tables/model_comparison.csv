@@ -1,0 +1,4 @@
+﻿Model,Embedding Source,Test Loss,Test Perplexity,Top-1 Accuracy,Top-5 Accuracy,Notes
+N-gram baseline,No dense embedding,,2.0885555441170593,,,Simple and stable for small corpus
+Fixed skip-gram Neural LM,Skip-gram embeddings,0.5882418804557611,1.8008195745239384,0.8829787234042553,0.9680851063829787,Uses semantic embeddings from SGNS
+Scratch embedding Neural LM,Learned from scratch,0.5930281467471562,1.8094594363964496,0.8829787234042553,0.9680851063829787,Learns embeddings during next-word prediction

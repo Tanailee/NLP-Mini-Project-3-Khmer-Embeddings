@@ -1,0 +1,4 @@
+﻿Model,Embedding Source,Train Loss,Validation Loss,Test Perplexity,Top-1 Accuracy,Top-5 Accuracy,Notes
+N-gram baseline,No embeddings,,,158.83769754208336,,,Add-one smoothing; stable for small corpus
+Neural LM fixed,Skip-gram embeddings fixed,0.9321398819847071,4.972656490528478,115.09863540218653,0.3588798820928519,0.5239498894620487,Uses semantic vectors but does not update embeddings
+Neural LM scratch,Learned from scratch,0.3883190260161485,5.764475635371025,229.07011892569074,0.3544583640383198,0.5232129697862933,Learns task-specific embeddings

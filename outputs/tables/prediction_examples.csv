@@ -1,0 +1,21 @@
+﻿context_words,true_next_word,predicted_next_word,correct
+ប្រាសាទ បុរាណ <UNK> ទៀត ជាច្រើន,<UNK>,<UNK>,True
+បុរាណ <UNK> ទៀត ជាច្រើន <UNK>,នេះ,<UNK>,False
+<UNK> ទៀត ជាច្រើន <UNK> នេះ,ក្រុង,បាន,False
+ទៀត ជាច្រើន <UNK> នេះ ក្រុង,សៀមរាប,<UNK>,False
+ជាច្រើន <UNK> នេះ ក្រុង សៀមរាប,កំពុង,នៃ,False
+<UNK> នេះ ក្រុង សៀមរាប កំពុង,<UNK>,<UNK>,True
+នេះ ក្រុង សៀមរាប កំពុង <UNK>,<UNK>,<UNK>,True
+ក្រុង សៀមរាប កំពុង <UNK> <UNK>,ជា,<UNK>,False
+សៀមរាប កំពុង <UNK> <UNK> ជា,ក្រុង,<UNK>,False
+កំពុង <UNK> <UNK> ជា ក្រុង,<UNK>,<UNK>,True
+<UNK> <UNK> ជា ក្រុង <UNK>,<UNK>,<UNK>,True
+<UNK> ជា ក្រុង <UNK> <UNK>,<UNK>,<UNK>,True
+ជា ក្រុង <UNK> <UNK> <UNK>,<UNK>,<UNK>,True
+ក្រុង <UNK> <UNK> <UNK> <UNK>,<UNK>,<UNK>,True
+<UNK> <UNK> <UNK> <UNK> <UNK>,<UNK>,<UNK>,True
+<UNK> <UNK> <UNK> <UNK> <UNK>,<UNK>,<UNK>,True
+<UNK> <UNK> <UNK> <UNK> <UNK>,<UNK>,<UNK>,True
+<UNK> <UNK> <UNK> <UNK> <UNK>,<UNK>,<UNK>,True
+<UNK> <UNK> <UNK> <UNK> <UNK>,ដែល,<UNK>,False
+<UNK> <UNK> <UNK> <UNK> ដែល,<UNK>,មាន,False
