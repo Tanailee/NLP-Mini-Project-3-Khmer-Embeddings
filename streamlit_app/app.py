@@ -89,37 +89,56 @@ SPLIT_RE = re.compile(r"[\s,;:()\[\]{}\"'«»“”‘’។៕?!…\-/]+")
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap');
+    :root {
+        --navy-dark: #0B1F33;
+        --navy: #102A43;
+        --blue: #2F648C;
+        --blue-dark: #244F70;
+        --gold: #D4A72C;
+        --light-gold: #F7E7B2;
+        --page-bg: #F6F8FB;
+        --card-bg: #FFFFFF;
+        --soft-blue: #EEF4FA;
+        --soft-gold: #FFF9E8;
+        --text-main: #102A43;
+        --text-body: #334E68;
+        --text-muted: #5B6B7C;
+        --text-soft: #829AB1;
+        --border: #DCE3EA;
+        --grid: #E8EDF2;
+        --success-bg: #DFF4E8;
+        --success-text: #176B3A;
+        --warning-bg: #FFF6DD;
+        --warning-text: #7A5A00;
+        --error-bg: #FDE8E8;
+        --error-text: #8B1E1E;
+    }
     html, body, [class*="css"] {
-        font-family: "Inter", "Segoe UI", sans-serif;
+        font-family: "Inter", "Noto Sans Khmer", "Khmer OS Siemreap", "Khmer OS", "Segoe UI", sans-serif;
+        color: var(--text-body);
     }
     .stApp {
-        background:
-            radial-gradient(circle at top left, rgba(201, 162, 39, 0.10), transparent 30%),
-            linear-gradient(180deg, #f8fbff 0%, #ffffff 38%);
+        background: var(--page-bg);
     }
     .block-container {
         padding-top: 2rem;
-        padding-left: 3rem;
-        padding-right: 3rem;
+        padding-left: clamp(1rem, 2.8vw, 3.25rem);
+        padding-right: clamp(1rem, 2.8vw, 3.25rem);
         padding-bottom: 2.4rem;
-        max-width: 1400px;
+        max-width: 1600px;
         box-sizing: border-box;
     }
     [data-testid="stAppViewContainer"] {
-        background:
-            radial-gradient(circle at top left, rgba(201, 162, 39, 0.10), transparent 30%),
-            linear-gradient(180deg, #f8fbff 0%, #ffffff 38%);
+        background: var(--page-bg);
     }
     .hero {
         position: relative;
         overflow: hidden;
         padding: 2rem 2.25rem;
         border-radius: 18px;
-        background:
-            linear-gradient(135deg, rgba(11, 31, 58, 0.98), rgba(14, 51, 91, 0.94) 56%, rgba(201, 162, 39, 0.18)),
-            linear-gradient(90deg, #FFF8ED, #EEF6FF);
-        border: 1px solid rgba(201, 162, 39, 0.32);
+        background: linear-gradient(135deg, #0B1F33 0%, #163B5C 55%, #2F648C 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         margin-bottom: 1rem;
         box-shadow: 0 16px 38px rgba(11, 31, 58, 0.15);
     }
@@ -131,7 +150,7 @@ st.markdown(
         width: 280px;
         height: 280px;
         border-radius: 50%;
-        border: 42px solid rgba(201, 162, 39, 0.16);
+        border: 42px solid rgba(255, 255, 255, 0.08);
     }
     .hero:after {
         content: "";
@@ -164,7 +183,7 @@ st.markdown(
         margin: 0.2rem 0;
     }
     .hero .hero-kicker {
-        color: #f4d675;
+        color: #F2C94C;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -235,6 +254,8 @@ st.markdown(
         border-radius: 16px;
         padding: 1rem 1.05rem;
         min-height: 106px;
+        width: 100%;
+        box-sizing: border-box;
         box-shadow: 0 12px 28px rgba(11, 31, 58, 0.08);
     }
     .metric-label {
@@ -257,6 +278,8 @@ st.markdown(
         border-radius: 16px;
         padding: 1.05rem;
         min-height: 128px;
+        width: 100%;
+        box-sizing: border-box;
         box-shadow: 0 10px 24px rgba(11, 31, 58, 0.07);
     }
     .feature-card {
@@ -452,7 +475,7 @@ st.markdown(
     }
     .result-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 0.75rem;
     }
     .result-label {
@@ -482,6 +505,8 @@ st.markdown(
     .table-shell {
         border-radius: 14px;
         overflow: hidden;
+        width: 100%;
+        overflow-x: auto;
     }
     .similarity-table th {
         background: #0B1F3A;
@@ -519,9 +544,463 @@ st.markdown(
     .interpretation-card strong {
         color: #0B1F3A;
     }
+    .page-intro {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        padding: 1.25rem 1.35rem;
+        margin-bottom: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        background:
+            radial-gradient(circle at 95% 10%, rgba(201,162,39,0.18), transparent 28%),
+            linear-gradient(135deg, #FFFFFF 0%, #EEF6FF 100%);
+        border: 1px solid #dfeaf6;
+        box-shadow: 0 12px 28px rgba(11, 31, 58, 0.08);
+    }
+    .page-kicker {
+        color: #C9A227;
+        font-size: 0.76rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+    }
+    .page-title {
+        color: #0B1F3A;
+        font-size: 1.72rem;
+        font-weight: 850;
+        line-height: 1.12;
+        margin-bottom: 0.35rem;
+    }
+    .page-description {
+        color: #526070;
+        max-width: 980px;
+        font-size: 0.96rem;
+        line-height: 1.55;
+    }
+    .hero-stat-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.8rem;
+        margin: 1rem 0 0.35rem 0;
+    }
+    .hero-stat {
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.20);
+        border-radius: 14px;
+        padding: 0.72rem 0.8rem;
+        position: relative;
+        z-index: 1;
+    }
+    .hero-stat-label {
+        color: #bad0e7;
+        font-size: 0.72rem;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.055em;
+    }
+    .hero-stat-value {
+        color: #FFFFFF;
+        font-size: 1.08rem;
+        font-weight: 850;
+        margin-top: 0.18rem;
+    }
+    .quality-panel {
+        display: grid;
+        grid-template-columns: minmax(280px, 1.05fr) repeat(2, minmax(240px, 1fr));
+        gap: 0.85rem;
+        margin: 0.8rem 0 1.1rem 0;
+    }
+    .quality-card {
+        background: #FFFFFF;
+        border: 1px solid #e6edf5;
+        border-radius: 16px;
+        padding: 1rem;
+        box-shadow: 0 12px 28px rgba(11,31,58,0.07);
+    }
+    .quality-card.primary {
+        background: linear-gradient(135deg, #0B1F3A 0%, #12345d 100%);
+        border-color: rgba(201,162,39,0.38);
+    }
+    .quality-label {
+        color: #526070;
+        font-size: 0.74rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.055em;
+        margin-bottom: 0.28rem;
+    }
+    .quality-card.primary .quality-label {
+        color: #F2C94C;
+    }
+    .quality-value {
+        color: #0B1F3A;
+        font-size: 1.45rem;
+        font-weight: 850;
+        line-height: 1.15;
+    }
+    .quality-card.primary .quality-value {
+        color: #FFFFFF;
+    }
+    .quality-body {
+        color: #526070;
+        font-size: 0.86rem;
+        line-height: 1.45;
+        margin-top: 0.35rem;
+    }
+    .quality-card.primary .quality-body {
+        color: #EAF1F7;
+    }
+    .journey {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 0.75rem;
+        margin: 0.8rem 0 1rem 0;
+    }
+    .journey-step {
+        position: relative;
+        background: #FFFFFF;
+        border: 1px solid #e6edf5;
+        border-radius: 16px;
+        padding: 0.95rem;
+        min-height: 128px;
+        box-shadow: 0 10px 22px rgba(11,31,58,0.06);
+    }
+    .journey-step:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #C9A227, #4E9FE5);
+        border-radius: 16px 16px 0 0;
+    }
+    .journey-number {
+        color: #C9A227;
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.35rem;
+    }
+    .journey-title {
+        color: #0B1F3A;
+        font-weight: 820;
+        font-size: 0.95rem;
+        margin-bottom: 0.3rem;
+    }
+    .journey-body {
+        color: #526070;
+        font-size: 0.82rem;
+        line-height: 1.42;
+    }
+    .result-story-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 0.85rem;
+        margin: 0.8rem 0 1rem 0;
+    }
+    .result-story-card {
+        background: #FFFFFF;
+        border: 1px solid #e6edf5;
+        border-radius: 16px;
+        padding: 1rem;
+        box-shadow: 0 12px 26px rgba(11,31,58,0.07);
+    }
+    .result-story-card.best {
+        border-color: rgba(201,162,39,0.55);
+        background: linear-gradient(180deg, #FFF8ED 0%, #FFFFFF 100%);
+    }
+    .story-model {
+        color: #0B1F3A;
+        font-weight: 830;
+        font-size: 0.95rem;
+        min-height: 2.3rem;
+    }
+    .story-perplexity {
+        color: #0B1F3A;
+        font-weight: 880;
+        font-size: 1.55rem;
+        margin: 0.28rem 0;
+    }
+    .story-source {
+        color: #526070;
+        font-size: 0.8rem;
+        line-height: 1.35;
+        min-height: 2.2rem;
+    }
+    .story-bar {
+        height: 8px;
+        border-radius: 999px;
+        background: #e7eef7;
+        overflow: hidden;
+        margin-top: 0.7rem;
+    }
+    .story-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #C9A227, #4E9FE5);
+    }
+    .predict-shell {
+        border-radius: 18px;
+        border: 1px solid #dfeaf6;
+        background: linear-gradient(135deg, #FFFFFF 0%, #F8FBFF 100%);
+        box-shadow: 0 12px 28px rgba(11,31,58,0.07);
+        padding: 1rem 1.1rem;
+        margin-bottom: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    [data-testid="stDataFrame"],
+    [data-testid="stTable"],
+    [data-testid="stPlotlyChart"] {
+        width: 100%;
+    }
+    .predict-title {
+        color: #0B1F3A;
+        font-size: 1.02rem;
+        font-weight: 830;
+        margin-bottom: 0.3rem;
+    }
+    .predict-body {
+        color: #526070;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+    /* Color system overrides: keep the UI calm, academic, and consistent. */
+    h1, h2, h3, h4, h5, h6,
+    .section-title,
+    .page-title,
+    .feature-title,
+    .pipeline-title,
+    .step-title,
+    .model-card-title,
+    .result-value,
+    .story-model,
+    .story-perplexity,
+    .metric-value {
+        color: var(--text-main);
+    }
+    p, li, .small-muted, .page-description, .feature-body, .pipeline-body,
+    .step-body, .model-card-body, .story-source, .predict-body {
+        color: var(--text-muted);
+    }
+    .soft-card,
+    .metric-card,
+    .feature-card,
+    .pipeline-card,
+    .step-card,
+    .result-story-card {
+        background: var(--card-bg);
+        border-color: var(--border);
+        box-shadow: 0 8px 20px rgba(16, 42, 67, 0.06);
+    }
+    .metric-card {
+        border-top-color: var(--gold);
+    }
+    .metric-label,
+    .result-label,
+    .quality-label,
+    .hero-stat-label {
+        color: var(--text-muted);
+    }
+    .icon-badge {
+        background: var(--soft-blue);
+        border-color: var(--border);
+        color: var(--blue);
+    }
+    .model-card,
+    .interpretation-card,
+    .predict-shell,
+    .page-intro {
+        background: var(--soft-blue);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--blue);
+        box-shadow: 0 8px 20px rgba(16, 42, 67, 0.06);
+    }
+    .note,
+    .result-card.warning,
+    .result-story-card.best {
+        background: var(--warning-bg);
+        border-color: #E8D59A;
+        border-left-color: var(--gold);
+        color: var(--warning-text);
+    }
+    .result-card {
+        background: var(--success-bg);
+        border-color: #B9E7CB;
+        border-left-color: #2F855A;
+        color: var(--success-text);
+    }
+    .quality-card {
+        background: var(--card-bg);
+        border-color: var(--border);
+        box-shadow: 0 8px 20px rgba(16, 42, 67, 0.06);
+    }
+    .quality-card.primary {
+        background: var(--soft-blue);
+        border-color: var(--border);
+        border-top: 3px solid var(--blue);
+    }
+    .quality-card.best {
+        background: var(--soft-gold);
+        border-color: #E8D59A;
+        border-top: 3px solid var(--gold);
+    }
+    .quality-card.primary .quality-label,
+    .quality-card.primary .quality-value,
+    .quality-card.primary .quality-body {
+        color: var(--text-main);
+    }
+    .story-bar-fill,
+    .journey-step:before {
+        background: linear-gradient(90deg, var(--blue), var(--gold));
+    }
+    [data-testid="stSidebar"] > div:first-child {
+        background: var(--navy-dark);
+    }
+    [data-testid="stSidebar"] * {
+        color: #DCE8F2;
+    }
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] .sidebar-brand-caption {
+        color: #9EB3C7;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label {
+        color: #D0DCE6;
+        border-left: 3px solid transparent;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label > div:first-child,
+    [data-testid="stSidebar"] [role="radiogroup"] label [data-testid="stMarkdownContainer"] + div {
+        display: none !important;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+        background: #1A3A55;
+        border: 0;
+        border-left: 3px solid var(--gold);
+        color: #FFFFFF;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label:before {
+        border-color: #587087;
+        background-color: rgba(255, 255, 255, 0.04);
+        box-shadow: inset 0 0 0 1px rgba(185, 201, 216, 0.12);
+        filter: grayscale(1) brightness(1.35) saturate(0.35);
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked):before {
+        border-color: var(--gold);
+        background-color: rgba(212, 167, 44, 0.13);
+        filter: none;
+    }
+    .sidebar-brand {
+        background: #132F4C;
+        border-color: rgba(220, 232, 242, 0.16);
+    }
+    .stButton > button {
+        background: var(--blue);
+        color: #FFFFFF;
+        border: 1px solid var(--blue);
+        border-radius: 10px;
+        font-weight: 700;
+    }
+    .stButton > button:hover {
+        background: var(--blue-dark);
+        border-color: var(--blue-dark);
+        color: #FFFFFF;
+    }
+    div[data-baseweb="select"] > div,
+    div[data-testid="stTextInput"] input,
+    div[data-testid="stFileUploader"] section {
+        background: #FFFFFF;
+        border-color: #CBD5E1;
+        color: var(--text-main);
+    }
+    div[data-baseweb="select"] > div:focus-within,
+    div[data-testid="stTextInput"] input:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 1px var(--blue);
+    }
+    div[data-testid="stCheckbox"] label span {
+        color: var(--text-body);
+    }
+    div[data-testid="stAlert"] {
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        color: var(--text-body);
+    }
+    div[data-testid="stAlert"] p {
+        color: var(--text-body);
+    }
+    /* Final polish: tables, sidebar icon contrast, and smaller screens. */
+    [data-testid="stDataFrame"],
+    [data-testid="stTable"] {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--card-bg);
+        box-shadow: 0 8px 18px rgba(16, 42, 67, 0.05);
+    }
+    [data-testid="stDataFrame"] div,
+    [data-testid="stTable"] div {
+        color: var(--text-body);
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label {
+        min-height: 42px;
+        padding-top: 0.42rem;
+        padding-bottom: 0.42rem;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label:before {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        border-radius: 9px;
+        opacity: 0.95;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked):before {
+        box-shadow: 0 0 0 3px rgba(212, 167, 44, 0.08);
+    }
+    @media (max-width: 700px) {
+        .block-container {
+            padding-left: 0.8rem;
+            padding-right: 0.8rem;
+            padding-top: 1rem;
+        }
+        .hero {
+            padding: 1.35rem;
+            border-radius: 14px;
+        }
+        .hero h1 {
+            font-size: 1.9rem;
+        }
+        .page-title {
+            font-size: 1.35rem;
+        }
+        .metric-value,
+        .quality-value,
+        .story-perplexity {
+            font-size: 1.25rem;
+        }
+        .feature-card,
+        .pipeline-card,
+        .step-card,
+        .quality-card,
+        .result-story-card {
+            min-height: auto;
+        }
+    }
     @media (max-width: 900px) {
         .result-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .hero-stat-strip,
+        .quality-panel,
+        .journey,
+        .result-story-grid {
+            grid-template-columns: 1fr;
         }
     }
     </style>
@@ -868,6 +1347,612 @@ def render_model_note(title, body):
     )
 
 
+def render_neural_lm_animation(compact=False):
+    card_class = "nlm-flow compact" if compact else "nlm-flow"
+    html_code = f"""
+    <style>
+    .nlm-flow {{
+        width: 100%;
+        padding: 1.15rem;
+        border-radius: 16px;
+        border: 1px solid #e6edf5;
+        background: linear-gradient(180deg, #FFFFFF 0%, #EEF6FF 100%);
+        box-shadow: 0 12px 28px rgba(11, 31, 58, 0.08);
+        overflow: hidden;
+    }}
+    .nlm-flow-title {{
+        color: #0B1F3A;
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin-bottom: 0.9rem;
+    }}
+    .nlm-flow-track {{
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(130px, 1fr));
+        gap: 0.9rem;
+        align-items: stretch;
+    }}
+    .nlm-node {{
+        position: relative;
+        z-index: 2;
+        min-height: 112px;
+        padding: 1rem 0.9rem;
+        border-radius: 14px;
+        background: #FFFFFF;
+        border: 1px solid rgba(11, 31, 58, 0.12);
+        border-top: 4px solid #C9A227;
+        box-shadow: 0 10px 22px rgba(11, 31, 58, 0.08);
+    }}
+    .nlm-node-label {{
+        color: #0B1F3A;
+        font-weight: 800;
+        font-size: 0.94rem;
+        margin-bottom: 0.4rem;
+    }}
+    .nlm-node-small {{
+        color: #526070;
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }}
+    .nlm-arrow {{
+        position: absolute;
+        z-index: 1;
+        top: 52px;
+        left: 8%;
+        width: 84%;
+        height: 3px;
+        background: linear-gradient(90deg, rgba(11,31,58,0.15), rgba(201,162,39,0.72), rgba(11,31,58,0.15));
+        border-radius: 999px;
+    }}
+    .nlm-dot {{
+        position: absolute;
+        top: -5px;
+        left: 0;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: var(--gold);
+        box-shadow: 0 0 0 6px rgba(201, 162, 39, 0.15);
+        animation: nlmFlow 4.8s linear infinite;
+    }}
+    @keyframes nlmFlow {{
+        0% {{ transform: translateX(0); opacity: 0; }}
+        8% {{ opacity: 1; }}
+        92% {{ opacity: 1; }}
+        100% {{ transform: translateX(100%); opacity: 0; }}
+    }}
+    .nlm-explain {{
+        margin-top: 1rem;
+        color: #526070;
+        font-size: 0.92rem;
+        line-height: 1.55;
+        background: #FFF8ED;
+        border-left: 4px solid #C9A227;
+        border-radius: 12px;
+        padding: 0.85rem 0.95rem;
+    }}
+    .nlm-flow.compact {{
+        padding: 0.85rem;
+    }}
+    .nlm-flow.compact .nlm-flow-track {{
+        grid-template-columns: repeat(4, minmax(120px, 1fr));
+    }}
+    .nlm-flow.compact .nlm-node {{
+        min-height: 88px;
+        padding: 0.8rem;
+    }}
+    .nlm-flow.compact .nlm-node-label {{
+        font-size: 0.84rem;
+    }}
+    .nlm-flow.compact .nlm-node-small {{
+        font-size: 0.74rem;
+    }}
+    @media (max-width: 900px) {{
+        .nlm-flow-track,
+        .nlm-flow.compact .nlm-flow-track {{
+            grid-template-columns: 1fr;
+        }}
+        .nlm-arrow {{
+            display: none;
+        }}
+        .nlm-node {{
+            min-height: auto;
+        }}
+    }}
+    </style>
+    <div class="{card_class}">
+        <div class="nlm-flow-title">Neural Language Model Architecture</div>
+        <div class="nlm-flow-track">
+            <div class="nlm-arrow"><div class="nlm-dot"></div></div>
+            <div class="nlm-node">
+                <div class="nlm-node-label">Input Context</div>
+                <div class="nlm-node-small">Previous 5 Khmer Words<br>w(t-5), w(t-4), w(t-3), w(t-2), w(t-1)</div>
+            </div>
+            <div class="nlm-node">
+                <div class="nlm-node-label">Embedding Layer</div>
+                <div class="nlm-node-small">5 x 50D word vectors</div>
+            </div>
+            <div class="nlm-node">
+                <div class="nlm-node-label">Concatenate</div>
+                <div class="nlm-node-small">250 input features</div>
+            </div>
+            <div class="nlm-node">
+                <div class="nlm-node-label">Hidden Layer</div>
+                <div class="nlm-node-small">512 units + ReLU</div>
+            </div>
+            <div class="nlm-node">
+                <div class="nlm-node-label">Softmax Output</div>
+                <div class="nlm-node-small">Predict next word</div>
+            </div>
+        </div>
+        <div class="nlm-explain">
+            The neural language model takes the previous five words, converts each word into a 50-dimensional embedding,
+            concatenates the embeddings into a 250-dimensional input, passes it through a 512-unit hidden layer,
+            and predicts the next word using a softmax output.
+        </div>
+    </div>
+    """
+    st.markdown(html_code, unsafe_allow_html=True)
+
+
+def render_neural_architecture_animation(input_words=None, focus_stage="Auto animation"):
+    """Premium Streamlit-safe CSS-only architecture explorer."""
+    default_words = ["w(t-5)", "w(t-4)", "w(t-3)", "w(t-2)", "w(t-1)"]
+    if input_words is None:
+        input_words = []
+
+    display_words = []
+    for index in range(5):
+        if index < len(input_words) and str(input_words[index]).strip() != "":
+            display_words.append(str(input_words[index]).strip())
+        else:
+            display_words.append(default_words[index])
+
+    word_items = ""
+    for item_index, word in enumerate(display_words, start=1):
+        word_items += f"<div class='premium-word-pill' style='--node-delay: {item_index * 0.12}s;'>{html.escape(word)}</div>"
+
+    def layer_class(stage_name):
+        if focus_stage == stage_name:
+            return "premium-layer premium-focus"
+        return "premium-layer"
+
+    stage_notes = {
+        "Auto animation": "Auto mode highlights each stage in sequence to show the full next-word prediction flow.",
+        "Input": "Input stage: the model receives exactly five previous Khmer words as context.",
+        "Embedding": "Embedding stage: each word ID is mapped to a learned 50-dimensional vector.",
+        "Concatenate": "Concatenate stage: five 50D embeddings are joined into one 250-feature input.",
+        "Hidden Layer": "Hidden layer: the 250 features pass through 512 ReLU units.",
+        "Softmax": "Softmax stage: the model converts output scores into vocabulary probabilities.",
+        "Prediction": "Prediction stage: the word with the highest probability becomes the predicted next word.",
+    }
+    focus_note = html.escape(stage_notes.get(focus_stage, stage_notes["Auto animation"]))
+
+    html_code = f"""
+    <style>
+    .premium-arch {{
+        position: relative;
+        border-radius: 24px;
+        padding: 1.35rem;
+        overflow-x: auto;
+        border: 1px solid rgba(201, 162, 39, 0.28);
+        background:
+            radial-gradient(circle at 12% 10%, rgba(201,162,39,0.18), transparent 28%),
+            radial-gradient(circle at 88% 18%, rgba(78,159,229,0.16), transparent 30%),
+            linear-gradient(135deg, rgba(255,255,255,0.92), rgba(238,246,255,0.86));
+        box-shadow: 0 20px 45px rgba(11, 31, 58, 0.14);
+    }}
+    .premium-arch:before {{
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+        transform: translateX(-100%);
+        animation: premiumSweep 8s ease-in-out infinite;
+    }}
+    .premium-head {{
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+        margin-bottom: 1.15rem;
+    }}
+    .premium-title {{
+        color: #0B1F3A;
+        font-weight: 850;
+        font-size: 1.28rem;
+        line-height: 1.15;
+        margin-bottom: 0.28rem;
+    }}
+    .premium-subtitle {{
+        color: #526070;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }}
+    .premium-chip {{
+        color: #0B1F3A;
+        background: #FFF8ED;
+        border: 1px solid rgba(201,162,39,0.45);
+        border-radius: 999px;
+        padding: 0.45rem 0.75rem;
+        font-size: 0.76rem;
+        font-weight: 800;
+        white-space: nowrap;
+        box-shadow: 0 8px 18px rgba(201,162,39,0.12);
+    }}
+    .premium-grid {{
+        position: relative;
+        z-index: 1;
+        min-width: 980px;
+        display: grid;
+        grid-template-columns: 165px 68px 165px 68px 155px 68px 170px 68px 165px 68px 145px;
+        align-items: center;
+        gap: 0;
+    }}
+    .premium-layer {{
+        position: relative;
+        min-height: 300px;
+        border-radius: 20px;
+        padding: 0.9rem 0.75rem;
+        background: rgba(255,255,255,0.82);
+        border: 1px solid rgba(11,31,58,0.10);
+        box-shadow: 0 12px 28px rgba(11,31,58,0.08);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(8px);
+        animation: premiumLayerActive 10.8s ease-in-out infinite;
+        animation-delay: var(--stage-delay, 0s);
+    }}
+    .premium-layer.premium-focus {{
+        border-color: rgba(201,162,39,0.90);
+        box-shadow: 0 0 0 6px rgba(201,162,39,0.12), 0 20px 38px rgba(201,162,39,0.18);
+        transform: translateY(-5px);
+        animation: none;
+    }}
+    .premium-layer:after {{
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 20px;
+        border: 1px solid rgba(201,162,39,0);
+        box-shadow: 0 0 0 rgba(201,162,39,0);
+        animation: premiumRing 10.8s ease-in-out infinite;
+        animation-delay: var(--stage-delay, 0s);
+        pointer-events: none;
+    }}
+    .premium-layer.premium-focus:after {{
+        border-color: rgba(201,162,39,0.85);
+        box-shadow: 0 0 0 5px rgba(201,162,39,0.12);
+        animation: none;
+    }}
+    .premium-layer.premium-focus .premium-step {{
+        color: #0B1F3A;
+        background: #FFF8ED;
+        border: 1px solid rgba(201,162,39,0.42);
+        border-radius: 999px;
+        padding: 0.18rem 0.45rem;
+    }}
+    .premium-step {{
+        color: #C9A227;
+        font-size: 0.68rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.1rem;
+    }}
+    .premium-layer-title {{
+        color: #0B1F3A;
+        font-size: 0.92rem;
+        font-weight: 850;
+        text-align: center;
+        line-height: 1.2;
+    }}
+    .premium-layer-small {{
+        color: #526070;
+        font-size: 0.75rem;
+        text-align: center;
+        line-height: 1.35;
+        margin-bottom: 0.35rem;
+    }}
+    .premium-word-pill,
+    .premium-vector-pill {{
+        width: 88px;
+        min-height: 34px;
+        border-radius: 999px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #0B1F3A;
+        background: #FFFFFF;
+        border: 1.5px solid rgba(201,162,39,0.72);
+        box-shadow: 0 8px 18px rgba(11,31,58,0.08);
+        font-size: 0.75rem;
+        font-weight: 780;
+        padding: 0.15rem 0.38rem;
+    }}
+    .premium-word-pill {{
+        background: linear-gradient(180deg, #FFF8ED, #FFFFFF);
+        animation: premiumNodePulse 3.6s ease-in-out infinite;
+        animation-delay: var(--node-delay, 0s);
+    }}
+    .premium-vector-pill {{
+        border-radius: 12px;
+        border-color: rgba(11,31,58,0.22);
+    }}
+    .premium-feature {{
+        width: 96px;
+        height: 96px;
+        border-radius: 22px;
+        background: linear-gradient(180deg, #FFF8ED, #FFFFFF);
+        border: 2px solid #C9A227;
+        box-shadow: 0 13px 26px rgba(201,162,39,0.18);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #0B1F3A;
+        font-weight: 900;
+        font-size: 1.18rem;
+    }}
+    .premium-feature span {{
+        color: #526070;
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin-top: 0.2rem;
+    }}
+    .premium-hidden-wrap {{
+        display: grid;
+        grid-template-columns: repeat(2, 42px);
+        gap: 0.58rem;
+        justify-content: center;
+        align-items: center;
+    }}
+    .premium-hidden-node {{
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 35% 30%, #FFFFFF, #EEF6FF);
+        border: 1.6px solid rgba(11,31,58,0.28);
+        box-shadow: 0 8px 18px rgba(11,31,58,0.08);
+        animation: premiumHiddenPulse 2.4s ease-in-out infinite;
+    }}
+    .premium-hidden-node:nth-child(2n) {{ animation-delay: 0.25s; }}
+    .premium-hidden-node:nth-child(3n) {{ animation-delay: 0.5s; }}
+    .premium-output,
+    .premium-prediction {{
+        width: 104px;
+        min-height: 90px;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0.45rem;
+        color: #0B1F3A;
+        background: #FFFFFF;
+        border: 1.8px solid rgba(11,31,58,0.20);
+        box-shadow: 0 12px 24px rgba(11,31,58,0.08);
+        font-size: 0.77rem;
+        font-weight: 780;
+        line-height: 1.25;
+    }}
+    .premium-prediction {{
+        border: 2px solid #C9A227;
+        background: linear-gradient(180deg, #FFF8ED, #FFFFFF);
+        animation: premiumPredictionGlow 10.8s ease-in-out infinite;
+    }}
+    .premium-connector {{
+        position: relative;
+        height: 46px;
+        margin: 0 0.45rem;
+        display: flex;
+        align-items: center;
+    }}
+    .premium-connector-line {{
+        position: relative;
+        width: 100%;
+        height: 5px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(11,31,58,0.12), rgba(201,162,39,0.35), rgba(11,31,58,0.12));
+        overflow: hidden;
+    }}
+    .premium-connector-line:before {{
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -85%;
+        width: 85%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,248,237,0.15), #C9A227, rgba(255,248,237,0.15), transparent);
+        animation: premiumShimmer 10.8s ease-in-out infinite;
+        animation-delay: var(--flow-delay, 0s);
+    }}
+    .premium-connector-dot {{
+        position: absolute;
+        top: 16px;
+        left: -8px;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background: #C9A227;
+        box-shadow: 0 0 0 7px rgba(201,162,39,0.14), 0 0 16px rgba(201,162,39,0.85);
+        animation: premiumMoveSignal 10.8s ease-in-out infinite;
+        animation-delay: var(--flow-delay, 0s);
+    }}
+    .premium-arrow-tip {{
+        width: 0;
+        height: 0;
+        margin-left: -2px;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-left: 10px solid #C9A227;
+        opacity: 0.82;
+    }}
+    .premium-note-grid {{
+        position: relative;
+        z-index: 1;
+        margin-top: 1.05rem;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+    }}
+    .premium-note {{
+        color: #526070;
+        background: rgba(255,255,255,0.86);
+        border: 1px solid rgba(11,31,58,0.08);
+        border-left: 4px solid #C9A227;
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        font-size: 0.9rem;
+        line-height: 1.55;
+        box-shadow: 0 10px 22px rgba(11,31,58,0.06);
+    }}
+    .premium-focus-note {{
+        position: relative;
+        z-index: 1;
+        margin-top: 0.9rem;
+        padding: 0.85rem 1rem;
+        border-radius: 14px;
+        background: #0B1F3A;
+        color: #EEF6FF;
+        border: 1px solid rgba(201,162,39,0.34);
+        box-shadow: 0 12px 26px rgba(11,31,58,0.16);
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }}
+    @keyframes premiumSweep {{
+        0%, 72%, 100% {{ transform: translateX(-100%); opacity: 0; }}
+        82% {{ opacity: 1; }}
+        92% {{ transform: translateX(100%); opacity: 0; }}
+    }}
+    @keyframes premiumLayerActive {{
+        0%, 100% {{ transform: translateY(0); }}
+        7%, 14% {{ transform: translateY(-4px); }}
+    }}
+    @keyframes premiumRing {{
+        0%, 100% {{ border-color: rgba(201,162,39,0); box-shadow: 0 0 0 rgba(201,162,39,0); }}
+        7%, 14% {{ border-color: rgba(201,162,39,0.8); box-shadow: 0 0 0 5px rgba(201,162,39,0.10), 0 16px 30px rgba(201,162,39,0.16); }}
+    }}
+    @keyframes premiumMoveSignal {{
+        0%, 4% {{ transform: translateX(0); opacity: 0; }}
+        7% {{ opacity: 1; }}
+        15% {{ transform: translateX(62px); opacity: 1; }}
+        20%, 100% {{ transform: translateX(62px); opacity: 0; }}
+    }}
+    @keyframes premiumShimmer {{
+        0%, 4% {{ transform: translateX(0); opacity: 0; }}
+        8% {{ opacity: 1; }}
+        16% {{ transform: translateX(220%); opacity: 1; }}
+        21%, 100% {{ transform: translateX(220%); opacity: 0; }}
+    }}
+    @keyframes premiumNodePulse {{
+        0%, 100% {{ box-shadow: 0 8px 18px rgba(11,31,58,0.08); }}
+        50% {{ box-shadow: 0 9px 22px rgba(201,162,39,0.24); transform: scale(1.025); }}
+    }}
+    @keyframes premiumHiddenPulse {{
+        0%, 100% {{ border-color: rgba(11,31,58,0.28); box-shadow: 0 8px 18px rgba(11,31,58,0.08); transform: scale(1); }}
+        50% {{ border-color: rgba(201,162,39,0.86); box-shadow: 0 0 0 6px rgba(201,162,39,0.10), 0 12px 22px rgba(201,162,39,0.22); transform: scale(1.08); }}
+    }}
+    @keyframes premiumPredictionGlow {{
+        0%, 76%, 100% {{ box-shadow: 0 12px 24px rgba(11,31,58,0.08); transform: scale(1); }}
+        83%, 94% {{ box-shadow: 0 0 0 8px rgba(201,162,39,0.15), 0 18px 34px rgba(201,162,39,0.26); transform: scale(1.055); }}
+    }}
+    @media (max-width: 900px) {{
+        .premium-head,
+        .premium-note-grid {{ grid-template-columns: 1fr; display: grid; }}
+    }}
+    </style>
+    <div class="premium-arch">
+        <div class="premium-head">
+            <div>
+                <div class="premium-title">Neural LM Architecture Explorer</div>
+                <div class="premium-subtitle">Interactive view of the Khmer next-word prediction architecture</div>
+            </div>
+            <div class="premium-chip">n = 5 | 50D | 512 hidden units</div>
+        </div>
+        <div class="premium-grid">
+            <div class="{layer_class("Input")}" style="--stage-delay: 0s;">
+                <div class="premium-step">Step 1</div>
+                <div class="premium-layer-title">Input Layer</div>
+                <div class="premium-layer-small">Previous 5 Khmer Words</div>
+                {word_items}
+            </div>
+            <div class="premium-connector" style="--flow-delay: 0.35s;"><div class="premium-connector-line"></div><div class="premium-connector-dot"></div><div class="premium-arrow-tip"></div></div>
+            <div class="{layer_class("Embedding")}" style="--stage-delay: 1.55s;">
+                <div class="premium-step">Step 2</div>
+                <div class="premium-layer-title">Embedding Layer</div>
+                <div class="premium-layer-small">Each word to 50D vector</div>
+                <div class="premium-vector-pill">50D</div>
+                <div class="premium-vector-pill">50D</div>
+                <div class="premium-vector-pill">50D</div>
+                <div class="premium-vector-pill">50D</div>
+                <div class="premium-vector-pill">50D</div>
+            </div>
+            <div class="premium-connector" style="--flow-delay: 1.95s;"><div class="premium-connector-line"></div><div class="premium-connector-dot"></div><div class="premium-arrow-tip"></div></div>
+            <div class="{layer_class("Concatenate")}" style="--stage-delay: 3.1s;">
+                <div class="premium-step">Step 3</div>
+                <div class="premium-layer-title">Concatenate</div>
+                <div class="premium-layer-small">5 x 50 = 250 features</div>
+                <div class="premium-feature">250<span>features</span></div>
+            </div>
+            <div class="premium-connector" style="--flow-delay: 3.55s;"><div class="premium-connector-line"></div><div class="premium-connector-dot"></div><div class="premium-arrow-tip"></div></div>
+            <div class="{layer_class("Hidden Layer")}" style="--stage-delay: 4.65s;">
+                <div class="premium-step">Step 4</div>
+                <div class="premium-layer-title">Hidden Layer</div>
+                <div class="premium-layer-small">512 units + ReLU</div>
+                <div class="premium-hidden-wrap">
+                    <div class="premium-hidden-node"></div>
+                    <div class="premium-hidden-node"></div>
+                    <div class="premium-hidden-node"></div>
+                    <div class="premium-hidden-node"></div>
+                    <div class="premium-hidden-node"></div>
+                    <div class="premium-hidden-node"></div>
+                    <div class="premium-hidden-node"></div>
+                    <div class="premium-hidden-node"></div>
+                </div>
+            </div>
+            <div class="premium-connector" style="--flow-delay: 5.15s;"><div class="premium-connector-line"></div><div class="premium-connector-dot"></div><div class="premium-arrow-tip"></div></div>
+            <div class="{layer_class("Softmax")}" style="--stage-delay: 6.2s;">
+                <div class="premium-step">Step 5</div>
+                <div class="premium-layer-title">Softmax Output</div>
+                <div class="premium-layer-small">Vocabulary probabilities</div>
+                <div class="premium-output">softmax<br>probabilities</div>
+            </div>
+            <div class="premium-connector" style="--flow-delay: 6.75s;"><div class="premium-connector-line"></div><div class="premium-connector-dot"></div><div class="premium-arrow-tip"></div></div>
+            <div class="{layer_class("Prediction")}" style="--stage-delay: 7.75s;">
+                <div class="premium-step">Step 6</div>
+                <div class="premium-layer-title">Prediction</div>
+                <div class="premium-layer-small">Top predicted word</div>
+                <div class="premium-prediction">next word</div>
+            </div>
+        </div>
+        <div class="premium-note-grid">
+            <div class="premium-note">The neural language model receives the previous five Khmer words. Each word is converted into a 50-dimensional embedding. The five embeddings are concatenated into a 250-dimensional vector, passed through a 512-unit hidden layer, and finally a softmax layer predicts the next word.</div>
+            <div class="premium-note">This animation is a conceptual visualization of the saved neural language model architecture. It does not retrain the model.</div>
+        </div>
+        <div class="premium-focus-note">{focus_note}</div>
+    </div>
+    """
+    st.markdown(html_code, unsafe_allow_html=True)
+
+    architecture_rows = [
+        {"Component": "Context words", "Project Setting": "5"},
+        {"Component": "Embedding dimension", "Project Setting": "50"},
+        {"Component": "Concatenated input", "Project Setting": "250"},
+        {"Component": "Hidden layer", "Project Setting": "512"},
+        {"Component": "Output", "Project Setting": "Vocabulary size"},
+        {"Component": "Task", "Project Setting": "Next-word prediction"},
+    ]
+    st.dataframe(pd.DataFrame(architecture_rows), use_container_width=True, hide_index=True)
+
 def render_embedding_result_card(selected_word, status, nearest_count, display_filter_on=True):
     card_class = "result-card"
     if status != "Found":
@@ -993,15 +2078,15 @@ def render_embedding_vector_expander(query_word, embeddings, word2idx):
 def style_plotly_chart(fig, height=420, bargap=None):
     fig.update_layout(
         template="plotly_white",
-        font=dict(size=13, color="#0B1F3A"),
+        font=dict(size=13, color="#102A43"),
         plot_bgcolor="white",
         paper_bgcolor="white",
         height=height,
         margin=dict(l=40, r=40, t=70, b=60),
-        colorway=["#0B1F3A", "#4E9FE5", "#C9A227", "#6C757D", "#1F9D55"],
+        colorway=["#2F648C", "#D4A72C", "#3C8D6B", "#8A6FB3", "#D46A6A", "#6C7A89"],
     )
-    fig.update_xaxes(gridcolor="#E6EAF0", zerolinecolor="#E6EAF0")
-    fig.update_yaxes(gridcolor="#E6EAF0", zerolinecolor="#E6EAF0")
+    fig.update_xaxes(gridcolor="#E8EDF2", zerolinecolor="#E8EDF2", title_font_color="#5B6B7C", tickfont_color="#5B6B7C")
+    fig.update_yaxes(gridcolor="#E8EDF2", zerolinecolor="#E8EDF2", title_font_color="#5B6B7C", tickfont_color="#5B6B7C")
     if bargap is not None:
         fig.update_layout(bargap=bargap)
     return fig
@@ -1124,6 +2209,116 @@ def render_summary_card(title, body):
         """,
         unsafe_allow_html=True,
     )
+
+
+def render_page_intro(kicker, title, description):
+    st.markdown(
+        f"""
+        <div class="page-intro">
+            <div class="page-kicker">{html.escape(kicker)}</div>
+            <div class="page-title">{html.escape(title)}</div>
+            <div class="page-description">{html.escape(description)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_quality_panel():
+    st.markdown(
+        """
+        <div class="quality-panel">
+            <div class="quality-card primary">
+                <div class="quality-label">Project Readiness</div>
+                <div class="quality-value">Professor-ready</div>
+                <div class="quality-body">The app connects the PDF requirements, trained outputs, visual explanation, and deployment story in one interface.</div>
+            </div>
+            <div class="quality-card best">
+                <div class="quality-label">Best Result</div>
+                <div class="quality-value">115.10</div>
+                <div class="quality-body">Lowest test perplexity from the fixed skip-gram neural language model.</div>
+            </div>
+            <div class="quality-card">
+                <div class="quality-label">Main Evidence</div>
+                <div class="quality-value">50D vectors</div>
+                <div class="quality-body">Skip-gram and scratch embeddings are both visualized and compared.</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_learning_journey():
+    steps = [
+        ("01", "Load Text", "Use temples.txt or upload a Khmer .txt file for preprocessing and EDA."),
+        ("02", "Inspect Corpus", "Review cleaned text, token counts, frequency tables, and distribution charts."),
+        ("03", "Explore Vectors", "Search words, inspect raw 50D vectors, and compare cosine neighbors."),
+        ("04", "Read Geometry", "Use PCA and clustering to understand embedding-space structure."),
+        ("05", "Explain Models", "Compare n-gram, fixed embedding LM, and scratch embedding LM results."),
+    ]
+    cards = []
+    for number, title, body in steps:
+        cards.append(
+            "<div class='journey-step'>"
+            + f"<div class='journey-number'>STEP {number}</div>"
+            + f"<div class='journey-title'>{html.escape(title)}</div>"
+            + f"<div class='journey-body'>{html.escape(body)}</div>"
+            + "</div>"
+        )
+    st.markdown("<div class='journey'>" + "".join(cards) + "</div>", unsafe_allow_html=True)
+
+
+def render_presentation_demo_flow():
+    steps = [
+        ("01", "Start With Objective", "Explain that the project learns Khmer word embeddings from temples.txt."),
+        ("02", "Show Evidence", "Open the checklist and metrics to prove the PDF requirements are complete."),
+        ("03", "Demonstrate Embeddings", "Use the embedding explorer, raw vector view, and nearest words table."),
+        ("04", "Explain Geometry", "Use PCA and clustering to show how words organize in vector space."),
+        ("05", "Close With Results", "Compare perplexity and explain why fixed skip-gram LM performs best."),
+    ]
+    cards = []
+    for number, title, body in steps:
+        cards.append(
+            "<div class='journey-step'>"
+            + f"<div class='journey-number'>DEMO {number}</div>"
+            + f"<div class='journey-title'>{html.escape(title)}</div>"
+            + f"<div class='journey-body'>{html.escape(body)}</div>"
+            + "</div>"
+        )
+    st.markdown("<div class='journey'>" + "".join(cards) + "</div>", unsafe_allow_html=True)
+
+
+def render_model_story_cards(comparison_df):
+    if comparison_df.empty or "Model" not in comparison_df.columns or "Test Perplexity" not in comparison_df.columns:
+        return
+
+    working_df = comparison_df.copy()
+    working_df["Test Perplexity"] = pd.to_numeric(working_df["Test Perplexity"], errors="coerce")
+    working_df = working_df.dropna(subset=["Test Perplexity"])
+    if working_df.empty:
+        return
+
+    best_value = float(working_df["Test Perplexity"].min())
+    worst_value = float(working_df["Test Perplexity"].max())
+    span = max(worst_value - best_value, 1.0)
+    cards = []
+    for row_index, row in working_df.iterrows():
+        model_name = str(row["Model"])
+        source = str(row.get("Embedding Source", ""))
+        perplexity = float(row["Test Perplexity"])
+        score_width = 100 - ((perplexity - best_value) / span * 62)
+        score_width = max(28, min(100, score_width))
+        card_class = "result-story-card best" if perplexity == best_value else "result-story-card"
+        cards.append(
+            "<div class='" + card_class + "'>"
+            + "<div class='story-model'>" + html.escape(model_name) + "</div>"
+            + "<div class='story-perplexity'>" + f"{perplexity:.2f}" + "</div>"
+            + "<div class='story-source'>" + html.escape(source) + "</div>"
+            + "<div class='story-bar'><div class='story-bar-fill' style='width:" + f"{score_width:.0f}" + "%'></div></div>"
+            + "</div>"
+        )
+    st.markdown("<div class='result-story-grid'>" + "".join(cards) + "</div>", unsafe_allow_html=True)
 
 
 def make_metric_grid(items):
@@ -1337,7 +2532,7 @@ def plot_cluster_pca(clustered_df):
         title="PCA Visualization of Word Embeddings Colored by K-means Cluster",
         labels={"PC1": "Principal Component 1", "PC2": "Principal Component 2", "cluster": "Cluster"},
     )
-    fig.update_traces(marker=dict(opacity=0.82, line=dict(width=0.5, color="#0B1F3A")))
+    fig.update_traces(marker=dict(opacity=0.82, line=dict(width=0.5, color="#102A43")))
     return style_plotly_chart(fig, height=560)
 
 
@@ -1600,8 +2795,8 @@ def render_eda(tokens):
         )
         fig.update_traces(
             textposition="outside",
-            marker_color="#0B1F3A",
-            marker_line_color="#C9A227",
+            marker_color="#2F648C",
+            marker_line_color="#D4A72C",
             marker_line_width=0.8,
         )
         fig.update_xaxes(title="Frequency")
@@ -1617,7 +2812,7 @@ def render_eda(tokens):
             title="Word Frequency Distribution (Highly Skewed)",
             labels={"frequency": "Frequency"},
         )
-        fig.update_traces(marker_color="#4E9FE5", marker_line_color="#FFFFFF", marker_line_width=0.8)
+        fig.update_traces(marker_color="#2F648C", marker_line_color="#FFFFFF", marker_line_width=0.8)
         fig = style_plotly_chart(fig, height=420, bargap=0.1)
         if use_log_scale:
             fig.update_yaxes(type="log", title="Number of Words (log scale)")
@@ -1634,7 +2829,7 @@ def render_eda(tokens):
             labels={"rank": "Frequency Rank", "frequency": "Frequency"},
             hover_data=["word"],
         )
-        fig.update_traces(line_color="#C9A227", line_width=2.5)
+        fig.update_traces(line_color="#D4A72C", line_width=2.5)
         fig = style_plotly_chart(fig, height=420)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -1647,7 +2842,7 @@ def render_eda(tokens):
             title="Token Length Distribution",
             labels={"token_length": "Token Length"},
         )
-        fig.update_traces(marker_color="#0B1F3A", marker_line_color="#FFFFFF", marker_line_width=0.8)
+        fig.update_traces(marker_color="#2F648C", marker_line_color="#FFFFFF", marker_line_width=0.8)
         fig = style_plotly_chart(fig, height=420, bargap=0.12)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -1670,7 +2865,7 @@ def render_eda(tokens):
             title="Token Length vs Frequency",
             labels={"length": "Token Length", "frequency": "Frequency"},
         )
-        fig.update_traces(marker=dict(color="#4E9FE5", size=8, line=dict(width=0.6, color="#0B1F3A")))
+        fig.update_traces(marker=dict(color="#2F648C", size=8, line=dict(width=0.6, color="#102A43")))
         fig = style_plotly_chart(fig, height=430)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -1719,7 +2914,7 @@ if page == "Home":
     if vocab_size == 0:
         vocab_size = 175
     st.markdown(
-        """
+        f"""
         <div class="hero">
             <div class="hero-kicker">Khmer NLP Portfolio Project</div>
             <h1>Khmer Temple NLP Explorer</h1>
@@ -1728,11 +2923,31 @@ if page == "Home":
             A professional dashboard for demonstrating Khmer text preprocessing, semantic word vectors,
             and language-model evaluation from NLP Mini Project 3.
             </p>
+            <div class="hero-stat-strip">
+                <div class="hero-stat">
+                    <div class="hero-stat-label">Corpus</div>
+                    <div class="hero-stat-value">temples.txt</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-label">Tokens</div>
+                    <div class="hero-stat-value">{total_tokens:,}</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-label">Vocabulary</div>
+                    <div class="hero-stat-value">{vocab_size:,}</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-label">Best Perplexity</div>
+                    <div class="hero-stat-value">115.10</div>
+                </div>
+            </div>
             <div class="hero-accent-line"></div>
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+    render_quality_panel()
 
     st.markdown('<div class="section-title">Key Project Metrics</div>', unsafe_allow_html=True)
     metric_columns = st.columns(4)
@@ -1753,6 +2968,9 @@ if page == "Home":
         setting_columns[3].metric("Hidden Layer", HIDDEN_SIZE)
 
     show_source_note()
+
+    st.markdown('<div class="section-title">Project Learning Journey</div>', unsafe_allow_html=True)
+    render_learning_journey()
 
     st.markdown('<div class="section-title">Main Actions</div>', unsafe_allow_html=True)
     feature_columns = st.columns(3)
@@ -1811,7 +3029,11 @@ if page == "Home":
 # Page 2: Presentation Summary
 # -----------------------------
 elif page == "Presentation Summary":
-    st.title("Presentation Summary")
+    render_page_intro(
+        "Presentation mode",
+        "Presentation Summary",
+        "A professor-friendly view of the project objective, method, results, limitations, and final conclusion.",
+    )
     total_tokens, vocab_size = get_project_metrics()
     if total_tokens == 0:
         total_tokens = 9075
@@ -1835,6 +3057,9 @@ elif page == "Presentation Summary":
     columns[1].metric("Total Tokens", f"{total_tokens:,}")
     columns[2].metric("Vocabulary Size", f"{vocab_size:,}")
     columns[3].metric("Best Perplexity", "115.10")
+
+    st.markdown('<div class="section-title">Recommended Presentation Flow</div>', unsafe_allow_html=True)
+    render_presentation_demo_flow()
 
     render_summary_card(
         "1. Project Objective",
@@ -1862,6 +3087,8 @@ elif page == "Presentation Summary":
         "6. Language Modeling Result",
         "The app compares an n-gram baseline, fixed skip-gram neural LM, and scratch embedding neural LM. The best model is the fixed skip-gram neural LM, with test perplexity around 115.10.",
     )
+    with st.expander("View compact neural LM architecture"):
+        render_neural_lm_animation(compact=True)
     render_summary_card(
         "7. Main Conclusion",
         "The fixed skip-gram neural language model achieved the best perplexity, showing that pretrained contextual embeddings helped next-word prediction on the Khmer temple corpus.",
@@ -1880,13 +3107,25 @@ elif page == "Presentation Summary":
 # Page 3: Mini Project Checklist
 # -----------------------------
 elif page == "Mini Project Checklist":
-    st.title("Mini Project 3 Requirement Checklist")
+    render_page_intro(
+        "Requirement mapping",
+        "Mini Project 3 Requirement Checklist",
+        "Verify that the implementation follows the assignment PDF: skip-gram, PCA, neural LM, scratch embeddings, and report summary.",
+    )
     render_model_note(
         "Requirement mapping",
         "This checklist maps the deployed system to the professor's Mini Project 3 requirements.",
     )
 
     checklist_df = build_requirement_checklist()
+    completed_count = int((checklist_df["Status"] == "Completed").sum())
+    checklist_columns = st.columns(3)
+    with checklist_columns[0]:
+        render_metric_card("Completed Items", str(completed_count))
+    with checklist_columns[1]:
+        render_metric_card("Total Requirements", str(len(checklist_df)))
+    with checklist_columns[2]:
+        render_metric_card("Alignment", "Complete")
     st.dataframe(checklist_df, use_container_width=True, hide_index=True)
 
 
@@ -1894,7 +3133,11 @@ elif page == "Mini Project Checklist":
 # Page 4: Text File Input & Preprocessing
 # -----------------------------
 elif page == "Text File Input & Preprocessing":
-    st.title("Text File Input & Preprocessing")
+    render_page_intro(
+        "Corpus input",
+        "Text File Input & Preprocessing",
+        "Choose the default temples.txt corpus or upload a Khmer .txt file, then inspect cleaning, tokenization, and frequency results.",
+    )
     show_source_note()
 
     text_source = st.radio(
@@ -1955,7 +3198,11 @@ elif page == "Text File Input & Preprocessing":
 # Page 3: EDA Dashboard
 # -----------------------------
 elif page == "EDA Dashboard":
-    st.title("EDA Dashboard")
+    render_page_intro(
+        "Corpus diagnostics",
+        "EDA Dashboard",
+        "Explore token frequency, rank patterns, token length, and corpus structure for the selected text source.",
+    )
     selected_text, selected_name, selected_source = get_current_text()
     st.caption("Current text source: " + selected_source + " | " + selected_name)
 
@@ -1971,7 +3218,11 @@ elif page == "EDA Dashboard":
 # Page 4: Word Embedding Explorer
 # -----------------------------
 elif page == "Word Embedding Explorer":
-    st.title("Word Embedding Explorer")
+    render_page_intro(
+        "Embedding inspection",
+        "Word Embedding Explorer",
+        "Search the trained vocabulary, inspect the raw 50-dimensional vector, and compare nearest contextual neighbors.",
+    )
     show_source_note()
     render_model_note(
         "How cosine similarity is used",
@@ -2033,7 +3284,11 @@ elif page == "Word Embedding Explorer":
 # Page 5: PCA Map
 # -----------------------------
 elif page == "PCA Map":
-    st.title("PCA Map")
+    render_page_intro(
+        "Embedding geometry",
+        "PCA Map",
+        "Project 50-dimensional skip-gram embeddings into two dimensions to inspect approximate word relationships.",
+    )
     show_source_note()
     render_model_note(
         "PCA visualization note",
@@ -2114,7 +3369,11 @@ elif page == "PCA Map":
 # Page 6: Advanced Clustering
 # -----------------------------
 elif page == "Advanced Clustering":
-    st.title("Advanced Clustering of Khmer Word Embeddings")
+    render_page_intro(
+        "Advanced exploration",
+        "Advanced Clustering of Khmer Word Embeddings",
+        "Use K-means and hierarchical clustering to explore contextual word groups in the learned embedding space.",
+    )
     show_source_note()
     render_model_note(
         "Optional advanced analysis",
@@ -2162,7 +3421,7 @@ elif page == "Advanced Clustering":
                     title="Silhouette Score for K-means Clustering",
                     labels={"k": "Number of clusters K", "silhouette_score": "Silhouette Score"},
                 )
-                fig.update_traces(line=dict(color="#0B1F3A", width=3), marker=dict(size=9, color="#C9A227"))
+                fig.update_traces(line=dict(color="#2F648C", width=3), marker=dict(size=9, color="#D4A72C"))
                 fig = style_plotly_chart(fig, height=390)
                 st.plotly_chart(fig, use_container_width=True)
 
@@ -2271,18 +3530,70 @@ elif page == "Advanced Clustering":
 # Page 7: Next Word Prediction
 # -----------------------------
 elif page == "Next Word Prediction":
-    st.title("Next Word Prediction")
+    render_page_intro(
+        "Neural language model",
+        "Next Word Prediction",
+        "Enter five Khmer context words, explore the neural architecture, and generate the next-word prediction.",
+    )
     show_source_note()
     render_model_note(
         "Prediction model note",
         "Next-word prediction uses the saved neural language model from the original temples.txt project. Uploaded files are not used to retrain the model in the app.",
     )
-
     embeddings, word2idx, idx2word, vocabulary, token_frequency = load_embedding_resources()
     if not word2idx or len(idx2word) == 0:
         st.warning("Vocabulary files not found. Please run the notebook first to generate outputs.")
     else:
-        user_context = st.text_input("Enter 5 Khmer words separated by spaces")
+        st.markdown(
+            """
+            <div class="predict-shell">
+                <div class="predict-title">Prediction workflow</div>
+                <div class="predict-body">
+                Select an example or enter five Khmer words. The app tokenizes the context, maps each word to the trained vocabulary,
+                runs the saved fixed skip-gram neural language model, and shows the top predicted next words.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        example_contexts = [
+            "ប្រាសាទ អង្គរវត្ត ស្ថិត នៅ ខេត្ត",
+            "ព្រះ បាទ សូរ្យ វរ្ម័ន ទី២",
+            "ចម្លាក់ អប្សរា នៅ លើ ជញ្ជាំង",
+        ]
+        example_choice = st.selectbox(
+            "Choose an example context for the architecture explorer",
+            ["Use my own input"] + example_contexts,
+        )
+        default_context = ""
+        if example_choice != "Use my own input":
+            default_context = example_choice
+
+        user_context = st.text_input("Enter 5 Khmer words separated by spaces", value=default_context)
+        architecture_words = user_context.strip().split()[:5]
+
+        with st.expander("View Animated Neural LM Architecture"):
+            st.caption("This visualization is conceptual and represents the saved neural LM architecture. It does not retrain the model.")
+            focus_stage = st.selectbox(
+                "Explore architecture stage",
+                ["Auto animation", "Input", "Embedding", "Concatenate", "Hidden Layer", "Softmax", "Prediction"],
+            )
+            render_neural_architecture_animation(architecture_words, focus_stage=focus_stage)
+
+            if len(architecture_words) == 5:
+                model, model_error = load_fixed_lm_model(str(MODEL_DIR / "neural_lm_fixed.pt"), len(idx2word))
+                if model is not None:
+                    try:
+                        architecture_prediction_df, context_tokens, tokenizer_name = neural_prediction(user_context, model, word2idx, idx2word)
+                        st.write("Top predicted words for this context:")
+                        st.dataframe(architecture_prediction_df.head(5), use_container_width=True)
+                    except Exception as error:
+                        st.info("Prediction preview is unavailable for this context, but the architecture visualization is still valid.")
+                else:
+                    st.info("Prediction model is not available. The architecture visualization is still shown as a conceptual model explanation.")
+            else:
+                st.info("Enter exactly 5 context words to preview top predicted words below the architecture.")
+
         predict_button = st.button("Predict Next Word")
 
         if predict_button:
@@ -2317,12 +3628,18 @@ elif page == "Next Word Prediction":
 # Page 7: Model Comparison
 # -----------------------------
 elif page == "Model Comparison":
-    st.title("Model Comparison")
+    render_page_intro(
+        "Evaluation",
+        "Model Comparison",
+        "Compare the n-gram baseline, fixed skip-gram neural language model, and scratch embedding neural language model.",
+    )
     comparison_df, source_label = get_model_comparison_data()
     if source_label == "Fallback notebook result":
         st.warning("Model comparison CSV not found. Showing fallback notebook result values.")
 
     render_best_model_card(comparison_df, source_label)
+    st.markdown('<div class="section-title">Result Story at a Glance</div>', unsafe_allow_html=True)
+    render_model_story_cards(comparison_df)
     render_model_note(
         "How to read this comparison",
         "Lower perplexity means the model is less surprised by the test text. Accuracy metrics show how often the correct next word appears as the top prediction or within the top five predictions.",
@@ -2339,7 +3656,7 @@ elif page == "Model Comparison":
             title="Test Perplexity by Model (Lower is Better)",
             labels={"Test Perplexity": "Test Perplexity"},
             color="Model",
-            color_discrete_sequence=["#0B1F3A", "#4E9FE5", "#C9A227", "#6C757D", "#1F9D55"],
+            color_discrete_sequence=["#6C7A89", "#2F648C", "#D4A72C"],
         )
         fig.update_traces(
             texttemplate="%{y:.2f}",
@@ -2361,7 +3678,7 @@ elif page == "Model Comparison":
                 text=metric_name,
                 title=metric_name + " by Model (Higher is Better)",
                 color="Model",
-                color_discrete_sequence=["#0B1F3A", "#4E9FE5", "#C9A227", "#6C757D", "#1F9D55"],
+                color_discrete_sequence=["#6C7A89", "#2F648C", "#D4A72C"],
             )
             fig.update_traces(
                 texttemplate="%{y:.2f}",
@@ -2385,7 +3702,11 @@ elif page == "Model Comparison":
 # Page 8: Project Report
 # -----------------------------
 elif page == "Project Report":
-    st.title("Project Report")
+    render_page_intro(
+        "Report view",
+        "Project Report",
+        "A concise written summary of the project objective, dataset, methods, results, limitations, and future work.",
+    )
 
     sections = {
         "Project Objective": "Build Khmer word embeddings and neural language models for a Khmer temple corpus.",
@@ -2408,7 +3729,11 @@ elif page == "Project Report":
 # Page 9: About & Deployment
 # -----------------------------
 elif page == "About & Deployment":
-    st.title("About & Deployment")
+    render_page_intro(
+        "Deployment",
+        "About & Deployment",
+        "Check the repository structure, local run command, Streamlit Cloud steps, and files needed for deployment.",
+    )
 
     st.subheader("Project Folder Structure")
     st.code(
